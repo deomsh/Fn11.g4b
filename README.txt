@@ -1,6 +1,6 @@
 # Fn11.g4b
 Grub4dos script, replacement for 'call Fn.11' (find chars in string)
-First published version 0.3
+First published version
 
 Fn11.g4b v0.3 (20221110), by deomsh - slight variation of steve6375's approach
 Function: Same as  'call Fn.11' (but %@^retval% can not be used)
