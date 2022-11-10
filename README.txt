@@ -9,6 +9,7 @@ Remark4: Reserved ASCII-codes: '\x7F' and '\xFF', but if in STRING replaced with
 Remark5: If using Fn11.g4b in a script and if FIND and STRING can maybe not be redirected, do not use '&;' (or '&&') after a line containing '[call ]Fn11.g4b
 Remark6: If FIND contains spaces near ' " ' or '\x22' use instead of spaces always '\x20'. Use for '%' '\x25', for ' | ' ' \x7C ' or '\x20|\x20'
 Remark7: CHEAT by unlocking lines preceded by #LOCKED# to FIND max 16 char(s) in STRING directly with '\x7Fchar(s)'; for instance escape-backslash with char(s) behind, use: '\x7F\char(s)' or '\x7F\x5Cchar(s)' - BTW first '\x7F'-part is not searched
+Help:    Fn11.g4b (without arguments) or Fn11.g4b /? will echo text above
 
 * Approach of steve6375 can be found on reboot.pro: http://reboot.pro/index.php?showtopic=22668#entry221888
 
