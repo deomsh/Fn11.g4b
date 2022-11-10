@@ -1,4 +1,4 @@
-Fn11.g4b v0.3 (20221110), by deomsh - slight variation of steve6375's approach*
+Fn11.g4b v0.3 (20221110), by deomsh - slight variation of steve6375's approach
 Function: Same as  'call Fn.11' (but %@retval% can not be used)
 Output: 'result=1' if FIND is found in STRING, 'result=0' if not found. For 'bad' STRING: 'message=STRING: baddbq', for bad FIND 'message=FIND: baddbq', for failed verify 'message=VERIFY: failed'
 Use: Fn11.g4b [/i] ["]FIND["] ["]STRING["]
