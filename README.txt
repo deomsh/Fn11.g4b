@@ -1,6 +1,3 @@
-# Fn11.g4b
-Grub4dos script, replacement for 'call Fn.11' (find chars in string)
-
 Fn11.g4b v0.3 (20221110), by deomsh - slight variation of steve6375's approach*
 Function: Same as  'call Fn.11' (but %@retval% can not be used)
 Output: 'result=1' if FIND is found in STRING, 'result=0' if not found. For 'bad' STRING: 'message=STRING: baddbq', for bad FIND 'message=FIND: baddbq', for failed verify 'message=VERIFY: failed'
@@ -13,9 +10,9 @@ Remark5: If using Fn11.g4b in a script and if FIND and STRING can maybe not be r
 Remark6: If FIND contains spaces near ' " ' or '\x22' use instead of spaces always '\x20'. Use for '%' '\x25', for ' | ' ' \x7C ' or '\x20|\x20'
 Remark7: CHEAT by unlocking lines preceded by #LOCKED# to FIND max 16 char(s) in STRING directly with '\x7Fchar(s)'; for instance escape-backslash with char(s) behind, use: '\x7F\char(s)' or '\x7F\x5Cchar(s)' - BTW first '\x7F'-part is not searched
 
-Script is ready for use as sub-routine, just replace '!BAT' on first line for a label, for instance ':Fn11' (without qoutes)
-
 * Approach of steve6375 can be found on reboot.pro: http://reboot.pro/index.php?showtopic=22668#entry221888
+
+Script is ready for use as sub-routine, just replace '!BAT' on first line for a label, for instance ':Fn11' (without qoutes)
 
 History:
 v0.3
