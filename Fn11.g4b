@@ -83,3 +83,4 @@ echo -e Remark4\t Reserved ASCII-codes: '\\x7F' and '\\xFF', but if in STRING re
 echo -e Remark5\t If using Fn11.g4b in a script and if FIND and STRING can maybe not\n\t be redirected, do not use '&;' (or '&&') after a line containing \n\t '[call ]Fn11.g4b'
 echo -e Remark6\t If FIND contains spaces near ' " ' or '\\x22' use instead of spaces \n\t always '\\x20'. Use for '\x25' '\\x25', for ' | ' ' \\x7C ' or '\\x20|\\x20'
 echo -e Remark7\t CHEAT by unlocking lines preceded by #LOCKED# to FIND max 16 char(s) \n\t in STRING directly with '\\x7Fchar(s)'; for instance escape-backslash\n\t with char(s) behind, use: '\\x7F\\char(s)' or '\\x7F\\x5Cchar(s)'\n\t BTW first '\\x7F'-part is not searched
+
