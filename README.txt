@@ -13,7 +13,7 @@ Help:    Fn11.g4b (without arguments) or Fn11.g4b /? will echo text above
 
 * Approach of steve6375 can be found on reboot.pro: http://reboot.pro/index.php?showtopic=22668#entry221888
 
-Script is ready for use as sub-routine, just replace '!BAT' on first line for a label, for instance ':Fn11' (without qoutes)
+Script is ready for use as sub-routine, just replace '!BAT' on first line for a label, for instance ':Fn11' (without quotes)
 
 History:
 v0.3
