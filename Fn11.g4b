@@ -1,0 +1,85 @@
+!BAT
+#-#+ Fn11.g4b v0.3 (20221110), by deomsh - slight variation of steve6375's approach
+#-#+ Function: Same as  'call Fn.11' (but %@^retval% can not be used)
+#-# Output: 'result=1' if FIND is found in STRING, 'result=0' if not found. For 'bad' STRING: 'message=STRING: baddbq', for bad FIND 'message=FIND: baddbq', for failed verify 'message=VERIFY: failed'
+#-# Use: Fn11.g4b [/i] ["]FIND["] ["]STRING["]
+#-# Remark1: Switch '/i' for case-insensitive FIND in STRING (not usable with \Xuuuu UTF-codes!)
+#-# Remark2: STRING is second argument on command-line, FIND comes always first. If argument can contain spaces or '=', use double-quotes around
+#-# Remark3: Double-qoute char in STRING will be found using \x22, as in original Fn.11 call. Char \x00 will not exist in STRING, but textual no problem with FIND: '\\x00'
+#-# Remark4: Reserved ASCII-codes: '\\x7F' and '\\xFF', but if in STRING replaced with '\\x01'-'\\x1F' (odd for '\\x7F', even for '\\xFF')
+#-# Remark5: If using Fn11.g4b in a script and if FIND and STRING can maybe not be redirected, do not use '&;' (or '&&') after a line containing '[call ]Fn11.g4b
+#-# Remark6: If FIND contains spaces near ' " ' or '\x22' use instead of spaces always '\x20'. Use for '\x25' '\\x25', for ' | ' ' \\x7C ' or '\\x20|\\x20'
+#-# Remark7: CHEAT by unlocking lines preceded by #LOCKED# to FIND max 16 char(s) in STRING directly with '\x7Fchar(s)'; for instance escape-backslash with char(s) behind, use: '\x7F\char(s)' or '\x7F\x5Cchar(s)' - BTW first '\x7F'-part is not searched
+#-# Remark9: Remove remarks before next line to use code-lines of Fn11.g4b as sub-routine and replace '!BAT' for label ':Fn11' (without qoutes)
+#REMOVE_ME_to_get_sub-routine#:Fn11
+if "%~1"=="" && goto :help
+if "%~1"=="/?" && if "%~2"=="" && goto :help
+setlocal && set *
+if /i %~1==/i && if not "%~3"=="" && set "i=/l " && shift
+set "ARG=%1" && set "ARG2=%~1" && shift
+if not exist ARG2 && endlocal && set "message=FIND: baddbq" && set result= && goto :eof
+set ARG=.%* && set badarg=N
+if exist badarg && if %ARG%==. && endlocal && set "message=STRING is missing on command-line" && set result= && goto :eof ! if not exist badarg && endlocal && set "message=STRING is bad or is missing on command-line" && set result= && goto :eof ! set ARG= && set badarg= && set ARG1=%*
+if not exist ARG1 && endlocal && set "message=STRING: baddbq" && set result= && goto :eof
+if "%ARG1:~-1,1%"==" " && set "ARG1=%ARG1:~0,-1%"
+set "ARG=%ARG1:~1,1%" && set dbqpos2=N
+if %dbqpos2%==N && if %ARG1:~1,1%==" " && set "ARG1=%ARG1:~0,1%\x20%ARG1:~2%" && set dbqpos2=
+set "ARGpos0=%ARG1:~0,1%" && set dbqpos0=N
+set "ARGposN=%ARG1:~-1,1%" && set dbqposN=N
+if not %dbqpos0%==N && if not %dbqposN%==N && if %ARG1:~0,1%%%ARG1:~-1,1%=="" && set "ARG1=%ARG1:~1,-1%"
+set char22=7F && set char00=FF
+set "ARG1=%ARG1%" &; set /a ARG1len=%@retval% > nul
+set "ARG2=%ARG2%" &; set /a ARG2len=%@retval% > nul
+set "ARG=%ARG2%"
+pause --wait=0 !BAT > (md)0x300+3
+pause --wait=0 set %i%"ARG12=%ARG1%%%ARG2%" >> (md)0x300+3 && set skip=16 && if exist i && set skip=19
+raw cat --locate=\x22\x0A\x00 --number=1 (md)0x300+3 > nul &; set /a length=%?%-%skip% > nul
+#-# CHEAT: unlock next two lines to FIND max 16 char(s) in STRING directly with '\x7Fchar(s)' (not with '/v'or '/iv'); for instance escape-backslash with char(s) behind, use: '\x7F\char(s)' or '\x7F\x5Cchar(s)' - part '\x7F' is not searched
+#LOCKED#if "%ARG:~0,4%"=="\x7F" && if not "%ARG:~4%"=="" && set result=0 && set "ARG2=%ARG:~4%" &; raw cat --skip=%skip% --locate="%ARG:~4%" --length=%ARG1len% (md)0x300+2 > nul && set result=1
+#LOCKED#if exist result && endlocal && set result=%result% && goto :eof
+set result=0 &; raw cat --skip=%skip% --locate=\x22 --length=%ARG1len% (md)0x300+2 > nul && set STRIN22=Y && set result=1
+raw cat --skip=%skip% --locate=\x5C\x7822 --length=%ARG1len% (md)0x300+2 > nul && set STRINx22=Y && set result=1
+raw cat --skip=%skip% --locate=\x5C\x7800 --length=%ARG1len% (md)0x300+2 > nul && set STRINx00=Y && set result=1
+if "%ARG%"=="\x22" &; if not %STRIN22%==Y if not %STRINx22%==Y || endlocal && set result=1 && goto :eof
+if "%ARG%"=="\x00" && if %STRINx00%==Y && endlocal && set result=1 && goto :eof
+if %result%==0 && call (md)0x300+3 && call set "ARG1=%^ARG12:~0,%ARG1len%%%"
+if %result%==0 && call set "ARG2=%^ARG12:~%ARG1len%%%"
+if %result%==0 && set result= &; call Fn.11 "%ARG1%" "%ARG2%" && endlocal && set result=1 && goto :eof ! endlocal && set result=0 && goto :eof
+set result=
+if %STRINx00%==Y &; raw cat --skip=%skip% --locate=\x5C\x78FF --length=%length% (md)0x300+3 > nul && set char00=0x2
+if not %STRIN22%==Y if not %STRINx22%==Y || raw cat --skip=%skip% --locate=\x7F --length=%length% (md)0x300+3 > nul && set char22=0x1
+if not %STRIN22%==Y if not %STRINx22%==Y || raw cat --skip=%skip% --locate=\x5C\x787F --length=%length% (md)0x300+3 > nul && set char22=0x1
+if not %char22%==0x1 if not %char00%==0x2 |; if %char22%==0x1 && if %char00%==0x2 && set c=22 && set verify=BOTH ! if %char22%==0x1 && set c=22 && set verify=22 ! set c=00 && set verify=00 &; call :verify &; if not %char22%==NA if not %char00%==NA |; endlocal && set result= && set "message=%message%" && goto :eof
+if not %STRIN22%==Y if not %STRINx22%==Y || raw cat --skip=%skip% --locate=\x22 --replace=\x%char22% --length=%length% (md)0x300+3 > nul
+if not %STRIN22%==Y if not %STRINx22%==Y || raw cat --skip=%skip% --locate=\x5C\x7822 --replace=\x5C\x78%char22% --length=%length% (md)0x300+3 > nul
+if %STRINx00%==Y && raw cat --skip=%skip% --locate=\x5C\x7800 --replace=\x5C\x78%char00% --length=%length% (md)0x300+3 > nul
+call (md)0x300+3
+call set "ARG1=%^ARG12:~0,%ARG1len%%%"
+call set "ARG2=%^ARG12:~%ARG1len%%%"
+call Fn.11 "%ARG1%" "%ARG2%" && set result=1 ! set result=0
+endlocal && set result=%result%
+goto :eof
+
+:verify
+set found= && set foundx=
+call if %^char%c%%%<=0xF && call raw cat --skip=%skip% --locate=\x5C\x780%^char%c%:~2% --length=%length% (md)0x300+3 > nul && call set /A char%c%=%^char%c%%%+2 > nul && set found=Y
+call if not %^char%c%%%<=0xF && call if %^char%c%%%<=0x1F && call raw cat --skip=%skip% --locate=\x5C\x78%^char%c%:~2% --length=%length% (md)0x300+3 > nul && call set /A char%c%=%^char%c%%%+2 > nul && set foundx=Y
+if %c%==22 &; if not %found%==Y if not %foundx%==Y |; if %char22%<=0x1F && goto :verify ! if not %char22%<=0x1F && set char22=NA && goto :eof
+if %verify%==BOTH && if %c%==22 && if not %found%==Y && if not %foundx%==Y && set c=00 && goto :verify
+if %c%==00 &; if not %found%==Y if not %foundx%==Y |; if %char00%<=0x1E && goto :verify ! if not %char00%<=0x1E && set char00=NA && goto :eof
+if not %verify%==22 if not %verify%==BOTH |; set char22=%char22% &; if %@retval%==1 && set char22=0%char22% ! if %@retval%==3 && set char22=0%char22:~2% ! if %@retval%==4 && set char22=%char22:~2%
+if not %verify%==00 if not %verify%==BOTH |; set char00=%char00% &; if %@retval%==1 && set char00=0%char00% ! if %@retval%==3 && set char00=0%char00:~2% ! if %@retval%==4 && set char00=%char00:~2%
+goto :eof
+
+:help
+echo -e Fn11.g4b v0.3 (20221110), by deomsh (slight variation of steve6375's approach)
+echo -e Function Same as 'call Fn.11' (but %@^retval% can not be used)
+echo -e Output\t 'result=1' if FIND is found in STRING, 'result=0' if not found. For \n\t 'bad' STRING: 'message=STRING: baddbq', for bad FIND 'message=FIND: \n\t baddbq', for failed verify 'message=VERIFY: failed'
+echo -e Use\t Fn11.g4b [/i] ["]FIND["] ["]STRING["]
+echo -e Remark1\t Switch '/i' for case-insensitive FIND in STRING (no \\Xuuuu UTF-codes)
+echo -e Remark2\t STRING is second argument on command-line, FIND comes always first. \n\t If argument can contain spaces or '=', use double-quotes around
+echo -e Remark3\t Double-qoute char in STRING found using '\\x22', as in original \n\t Fn.11 call. Char '\\x00' will not exist in STRING, but textual no \n\t problem with FIND: '\\\\x00'
+echo -e Remark4\t Reserved ASCII-codes: '\\x7F' and '\\xFF', but if in STRING replaced\n\t with '\\x01'-'\\x1F' (odd for '\\x7F', even for '\\xFF')
+echo -e Remark5\t If using Fn11.g4b in a script and if FIND and STRING can maybe not\n\t be redirected, do not use '&;' (or '&&') after a line containing \n\t '[call ]Fn11.g4b'
+echo -e Remark6\t If FIND contains spaces near ' " ' or '\\x22' use instead of spaces \n\t always '\\x20'. Use for '\x25' '\\x25', for ' | ' ' \\x7C ' or '\\x20|\\x20'
+echo -e Remark7\t CHEAT by unlocking lines preceded by #LOCKED# to FIND max 16 char(s) \n\t in STRING directly with '\\x7Fchar(s)'; for instance escape-backslash\n\t with char(s) behind, use: '\\x7F\\char(s)' or '\\x7F\\x5Cchar(s)'\n\t BTW first '\\x7F'-part is not searched
