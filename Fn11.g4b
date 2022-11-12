@@ -9,7 +9,8 @@
 #-# Remark4: Reserved ASCII-codes: \x7F and \xFF, but if in STRING replaced with \x01-\x1F (odd for \x7F, even for \xFF)
 #-# Remark5: If using Fn11.g4b in a script and if FIND and STRING can maybe not be redirected, do not use '&;' (or '&&') after a line containing '[call ]Fn11.g4b
 #-# Remark6: If FIND contains spaces near ' " ' or '\x22' use instead of spaces always '\x20'
-#-# Remark7: Remove remarks before next line to use code-lines of Fn11.g4b as sub-routine and replace '!BAT' for label ':Fn11' (without qoutes)
+#-# Remark7: With switch '/cat[i]': for textual '\xASCII-code' use '\\xASCII-code'. To find escaped space '\ ' use '\\ ', '\\\x20', '\x5C ' or '\x5C\x20'
+#-# Remark8: Remove remarks before next line to use code-lines of Fn11.g4b as sub-routine and replace '!BAT' for label ':Fn11' (without qoutes)
 #REMOVE_ME_to_get_sub-routine#:Fn11
 if "%~1"=="" && goto :help
 if "%~1"=="/?" && if "%~2"=="" && goto :help
@@ -86,4 +87,4 @@ echo -e Remark3\t Double-qoute char in STRING found using '\\x22', as in origina
 echo -e Remark4\t Reserved ASCII-codes: '\\x7F' and '\\xFF', but if in STRING replaced\n\t with '\\x01'-'\\x1F' (odd for '\\x7F', even for '\\xFF')
 echo -e Remark5\t If using Fn11.g4b in a script and if FIND and STRING can maybe not\n\t be redirected, do not use '&;' (or '&&') after a line containing \n\t '[call ]Fn11.g4b'
 echo -e Remark6\t If FIND contains spaces near ' " ' or '\\x22' use instead of spaces \n\t always '\\x20'. Use for '\x25' '\\x25', for ' | ' ' \\x7C ' or '\\x20|\\x20'
-echo -e Remark7\t With switch '/cat[i]': for textual '\\xASCII-code' use '\\\\xASCII-code'\n\t To find escaped space '\\ ' use '\\\\ ', '\\\\x20', '\\x5C ' or '\\x5C\\x20 '
+echo -e Remark7\t With switch '/cat[i]': for textual '\\xASCII-code' use '\\\\xASCII-code'\n\t To find escaped space '\\ ' use '\\\\ ', '\\\\x20', '\\x5C ' or '\\x5C\\x20'
