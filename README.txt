@@ -4,7 +4,7 @@ Output: 'result=1' if FIND is found in STRING, 'result=0' if not found. For 'bad
 Use: Fn11.g4b [/i|/cat|cati] ["]FIND["] ["]STRING["]
 Remark1: Switch '/i' for case-insensitive FIND in STRING (not usable with \Xuuuu UTF-codes!), '/cat' to FIND max 16 char(s) in STRING directly with 'cat' and '/cati' for using 'cat' with 'locatei'
 Remark2: STRING is second argument on command-line, FIND comes always first. If argument can contain spaces or '=', use double-quotes around
-Remark3: Double-qoute char in STRING will be found using \x22, as in original Fn.11 call. Char \x00 will not exist in STRING, but textual no problem with FIND: '\x00'
+Remark3: Double-qoute char in STRING will be found using \x22, as in original Fn.11 call. Char \x00 will not exist in STRING, but if containing textual '\x00' still found with FIND: '\x00'
 Remark4: Reserved ASCII-codes: '\x0F' and '\x11', but if in STRING replaced with available 'higher' ASCII-codes (only odd numbers, up to \xFF)
 Remark5: If using Fn11.g4b in a script and if FIND and STRING can maybe not be redirected, do not use '&;' (or '&&') after a line containing '[call ]Fn11.g4b
 Remark6: If FIND contains spaces near ' " ' or '\x22' use instead of spaces always '\x20'. Use for '%' '\x25', for ' | ' ' \x7C ' or '\x20|\x20'
