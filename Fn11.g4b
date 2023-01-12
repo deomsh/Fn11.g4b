@@ -1,9 +1,9 @@
 !BAT
-#-#+ Fn11.g4b v0.3.1 (20221120), by deomsh - slight variation of steve6375's approach
+#-#+ Fn11.g4b v0.3.2 (20230112), by deomsh - slight variation of steve6375's approach
 #-#+ Function: Same as  'call Fn.11' (but %@^retval% can not be used)
 #-# Output: 'result=1' if FIND is found in STRING, 'result=0' if not found. For 'bad' STRING: 'message=STRING: baddbq', for bad FIND 'message=FIND: baddbq', 'message=VERIFY: failed': no free 'higher' ASCII-codes found
 #-# Use: Fn11.g4b [/i|/cat|cati] ["]FIND["] ["]STRING["]
-#-# Remark1: Switch '/i' for case-insensitive FIND in STRING (not usable with \Xuuuu UTF-codes!), '/cat' to FIND max 16 char(s) in STRING directly with 'cat' and '/cati' for using 'cat' with 'locatei'
+#-# Remark1: Switch '/i' for case-insensitive FIND in STRING (not usable with \Xuuuu UTF-codes!), '/cat' to count FIND with 'cat' (max 16 chars) in STRING and '/cati' for using 'cat' with 'locatei' - both: result=count
 #-# Remark2: STRING is second argument on command-line, FIND comes always first. If argument can contain spaces, use double-quotes around
 #-# Remark3: Double-qoute char in STRING will be found using \x22, as in original Fn.11 call. Char \x00 will not exist in STRING, but if containing textual '\x00' still found with FIND: '\x00' (without single-qoutes)
 #-# Remark4: Reserved ASCII-codes: \x0F and \x11, but if in STRING replaced with available 'higher' ASCII-codes (only odd numbers, up to \xFF)
@@ -16,10 +16,11 @@ if "%~1"=="" &; goto :help
 if "%~1"=="/?" &; if "%~2"=="" &; goto :help
 setlocal && set *
 set cat=N
-if /i "%~1"=="/i" &; if not "%~3"=="" &; set "l=/l "
-if /i "%~1"=="/cat" &; if not "%~3"=="" &; set cat=Y
-if /i "%~1"=="/cati" &; if not "%~3"=="" &; set "l=/l " && set cat=Y && set i=i
-if not "%l%"=="/l " if not "%cat%"=="Y" |; shift
+set ARG3=%~3
+if /i "%~1"=="/i" && if exist ARG3 && set "l=/l "
+if /i "%~1"=="/cat" && if exist ARG3 && set cat=Y
+if /i "%~1"=="/cati" && if exist ARG3 && set "l=/l " && set cat=Y && set i=i
+if not "%l%"=="/l " if not "%cat%"=="Y" |; shift && set ARG3=
 set ARG=%1
 set ARG=%ARG% &; set ARG2=%1
 shift
@@ -35,8 +36,9 @@ set "ARG2=%ARG2%" &; set /a ARG2len=%@retval% > nul
 set /a ARG12len=%ARG1len%+%ARG2len% > nul
 if %ARG12len%<=510 && pause --wait=0 !BAT > (md)0x300+2 && pause --wait=0 set %l%"ARG12=%ARG1%%%ARG2%" >> (md)0x300+2 && set skip=16 && set length=%ARG12len% && if exist l && set skip=19
 if not %ARG12len%<=510 && pause --wait=0 !BAT > (md)0x300+2 && pause --wait=0 set %l%"ARG1=%ARG1%" >> (md)0x300+2 && set skip=15 && set length=%ARG1len% && set length2=%ARG2len% && if exist l && set skip=18
+if %cat%==Y &; raw cat --skip=%skip% --locate%i%="%ARG2%" --length=%ARG1len% (md)0x300+2 > nul &; set /a result=%@retval% > nul &; endlocal && set result=%result% && goto :eof
+if %cat%==Y && if not %result%>=1 && endlocal && set result=0 && goto :eof
 if "%ARG2%"=="\x00" &; raw cat --skip=%skip% --locate=\x5C\x7800 --length=%ARG1len% (md)0x300+2 > nul && endlocal && set result=1 && goto :eof ! endlocal && set result=0 && goto :eof
-if %cat%==Y &; raw cat --skip=%skip% --locate%i%="%ARG2%" --length=%ARG1len% (md)0x300+2 > nul && endlocal && set result=1 && goto :eof ! endlocal && set result=0 && goto :eof
 raw cat --skip=%skip% --locate=\x22 --length=%ARG1len% (md)0x300+2 > nul && set STRIN22=Y
 if not "%ARG2%"=="\x22" if %STRIN22%==Y || raw cat --skip=%skip% --locate=\x5C\x7822 --length=%ARG1len% (md)0x300+2 > nul && set STRINx22=Y
 if "%ARG2%"=="\x22" &; if not %STRIN22%==Y && if not %STRINx22%==Y && endlocal && set result=0 && goto :eof ! endlocal && set result=1 && goto :eof
@@ -71,11 +73,11 @@ if not %foundx%==Y &; raw cat --skip=%skip% --locate=\x%char:~2% --length=%lengt
 if not %found%==Y && if not %foundx%==Y && goto :eof ! if %char%<=0xFD && goto :verify ! set char=NA && set "message=VERIFY: failed" && goto :eof
 
 :help
-echo -e Fn11.g4b v0.3.1 (20221120), by deomsh. Slight variation of steve6375's approach
+echo -e Fn11.g4b v0.3.2 (20230112), by deomsh. Slight variation of steve6375's approach
 echo -e Function Same as 'call Fn.11' (but %@^retval% can not be used)
 echo -e Output\t 'result=1' if FIND is found in STRING, 'result=0' if not found. For \n\t 'bad' STRING: 'message=STRING: baddbq', for bad FIND 'message=FIND: \n\t baddbq', 'message=VERIFY: failed': no free 'higher' ASCII-codes found
 echo -e Use\t Fn11.g4b [/i|/cat|/cati] ["]FIND["] ["]STRING["]
-echo -e Remark1\t Switch '/i' for case-insensitive FIND in STRING (no \\Xuuuu UTF-codes)\n\t OR switch '/cat' to FIND max 16 char(s) in STRING directly with 'cat'\n\t OR switch '/cati' for using 'cat' with 'locatei'
+echo -e Remark1\t Switch '/i' for case-insensitive FIND in STRING (no \\Xuuuu UTF-codes)\n\t OR switch '/cat' to count FIND with 'cat' (max 16 chars) in STRING\n\t OR switch '/cati' for using 'cat' with 'locatei' - both: result=count
 echo -e Remark2\t STRING is second argument on command-line, FIND comes always first \n\t If argument can contain spaces or '=', use double-quotes around
 echo -e Remark3\t Double-qoute char in STRING found using '\\x22', as in original \n\t Fn.11 call. Char '\\x00' will not exist in STRING, but if containing \n\t textual '\\x00' still found with FIND: '\\x00' (without single-qoutes)
 echo -e Remark4\t Reserved ASCII-codes: '\\x0F' and '\\x11', but if in STRING replaced\n\t with available 'higher' ASCII-codes (only odd numbers, up to \\xFF)
